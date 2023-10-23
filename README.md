@@ -1,5 +1,5 @@
 # NuzLocke v0.1
-This is an interactive python tool to manage your Nuzlocke runs and pokemon.
+This is an interactive python based tool to manage your Nuzlocke runs and pokemon.
 To run NuzLocke via Terminal:
 
 
@@ -14,8 +14,14 @@ python NuzLocke.py -edition OmegaRuby
 ```
 
 ## Required Libraries:
- - Numpy
+ - python
+ - numpy
  - hjson
+
+### Upcoming Features:
+ - manual change of attributes 
+ - ending a Run to save some statistics into a file
+ - tracking of run number
 
 
 
