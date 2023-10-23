@@ -4,14 +4,14 @@ import argparse
 
 
 class Pokemon:
-    def __init__(self, id, area, species, nickname, status="Team"):
+    def __init__(self, id, origin, species, nickname, status="Team"):
         self.id = id
-        self.area = area 
+        self.origin = origin 
         self.species = species
         self.nickname = nickname 
         self.status = status
     def __str__(self):
-        return (f"ID: {self.id}, Species: {self.species}, Nickname: {self.nickname}, Origin: {self.area}, Status: {self.status}")
+        return (f"ID: {self.id}, Species: {self.species}, Nickname: {self.nickname}, Origin: {self.origin}, Status: {self.status}")
 
 def edition_selection(edition):
     if(edition):
@@ -45,7 +45,7 @@ def boot(edition):
     try:
         pokemon_dict = edition_stats["pokemon"]
         for id in pokemon_dict:
-            pokemon.append(Pokemon(pokemon_dict[id]["id"], pokemon_dict[id]["area"], pokemon_dict[id]["species"], pokemon_dict[id]["nickname"], status=pokemon_dict[id]["status"]))
+            pokemon.append(Pokemon(pokemon_dict[id]["id"], pokemon_dict[id]["origin"], pokemon_dict[id]["species"], pokemon_dict[id]["nickname"], status=pokemon_dict[id]["status"]))
     except: 
         print(" There are currently no Pokemon in your list.\n Would you like to add one? [Y/N]")
         _l = input()
@@ -64,7 +64,7 @@ def list_pokemon(pokemon):
     print("_______________________________________________________\n")
     max_lenghts = [2, 12, 20, 6]
     for p in pokemon:
-        _print_attr = [str(p.id), p.nickname, p.area, p.status]
+        _print_attr = [str(p.id), p.nickname, p.origin, p.status]
         for i,attr in enumerate(_print_attr):
             for j in range(max_lenghts[i]-len(attr)+4):
                 _print_attr[i] = _print_attr[i]+" "        
@@ -74,7 +74,7 @@ def list_pokemon(pokemon):
 
 def find_pokemon(pokemon, string):
     for p in pokemon:
-        if(string==str(p.id) or string==p.nickname or string==p.species or string==p.area):
+        if(string==str(p.id) or string==p.nickname or string==p.species or string==p.origin):
             return p.id 
     return
 
@@ -92,7 +92,7 @@ def add_pokemon(pokemon):
         return pokemon
     a = input("Type origin...")
     if(len(a)>20):
-        print("Invalid Area")
+        print("Invalid Origin")
         return pokemon
     if(find_pokemon(pokemon,a)):
         print("You already caught a Pokemon in this area.")
@@ -113,7 +113,6 @@ def add_fail(pokemon):
     pokemon.append(pkm)
     print(f"Added {a} as a failed Route")
     return pokemon
-
 
 def kill_pokemon(pid):
     for p in pokemon:
@@ -137,7 +136,36 @@ def change_box_status(pid):
     print("No Pokemon found in that list")
     return
 
-
+def change(pokemon):
+    pid = input("What Pokemon do you want to change?...")
+    pid = find_pokemon(pokemon, pid)
+    print("What attribute do you want to change?")
+    print("origin, species, nickname, status")
+    attr = input("Enter attribute...")
+    val = input(f"Enter new value of {attr}...")
+    if attr == "origin":
+        print(f"Nickname successfully changed from {pokemon[pid].origin} to {val}")
+        pokemon[pid].origin = val
+    elif attr == "species":
+        print(f"Nickname successfully changed from {pokemon[pid].species} to {val}")
+        pokemon[pid].species = val
+    elif attr == "nickname":
+        print(f"Nickname successfully changed from {pokemon[pid].nickname} to {val}")
+        pokemon[pid].nickname = val
+    elif attr == "status":
+        if(val in ["Team", "boxed", "dead", "failed"]):
+            print(f"Nickname successfully changed from {pokemon[pid].status} to {val}")
+            pokemon[pid].status = val
+            if(val=="failed"):
+                pokemon[pid].species = "-"
+                pokemon[pid].nickname = "-"
+                print("Status changed to failed, Speciec and Nickname have been deleted")
+        else:
+            print(f"{val} is not a legitimate status (Team, boxed, dead, failed)")
+    else: 
+        print("This is not an attribute you can change!")
+    return pokemon
+    
 def input_loop(pokemon, endbool): 
     print("Choose your next action (type help for listing all options)")  
     action = input(" ")
@@ -154,6 +182,7 @@ def input_loop(pokemon, endbool):
         print("box:            Changes box status of a pokemon (boxed <-> Team)")
         print("kill:           Change the status of a pokemon of your list to dead")
         print("change:         Manually Change an attribute of a Pokemon\n")
+
 
         print("exit:           Save every change and exit NuzLocke\n")
 
@@ -199,9 +228,11 @@ def input_loop(pokemon, endbool):
         kill_pokemon(_to_kill)
     if(action=="box"):
         _to_box = input("What Pokemon do you want (Un)box?...")
-        print(_to_box)
         _to_box = find_pokemon(pokemon,_to_box)
         change_box_status(_to_box)
+    if(action=="change"):
+        change(pokemon)
+
     if(action=="exit"):
         endbool=1
     return pokemon, endbool  
@@ -209,7 +240,7 @@ def input_loop(pokemon, endbool):
 def saveAll(edition, pokemon,  run_Number, hjson_dict):
     pokemon_dict = {}
     for _p in pokemon:
-       _pdict = {"id": _p.id, "nickname": _p.nickname, "species": _p.species, "area": _p.area, "status": _p.status}
+       _pdict = {"id": _p.id, "nickname": _p.nickname, "species": _p.species, "origin": _p.origin, "status": _p.status}
        pokemon_dict[_p.id] = _pdict
     hjson_dict[edition] = {"run_Number": run_Number, "pokemon": pokemon_dict}
     with open("stats.json", "w") as outfile: 

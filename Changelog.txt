@@ -1,0 +1,11 @@
+v0.1.1:
+ - Implemented possibility to manually change an attribute of a Pokemon
+    - All attributes (except id) can now manually be adjusted in case of some mistake before
+    - status can only be changed to "Team", "boxed", "dead", and "failed"
+      - if status is set to "failed", the species and the nickname will be deleted
+        
+
+
+v0.1:
+ - First version of NuzLocke
+ - Basic Management of Pokemon
